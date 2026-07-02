@@ -1,0 +1,413 @@
+<div class="header">
+
+    <div>
+
+        <h1>Help Desk Management System</h1>
+
+        <p>
+
+            Welcome,
+
+            <b>{{username}}</b>
+
+            ({{role}})
+
+        </p>
+
+    </div>
+
+    <button (click)="logout()">
+
+        Logout
+
+    </button>
+
+</div>
+
+<!-- PASTE HERE -->
+
+<div class="dashboard">
+
+  <div
+  class="card open-card"
+  (click)="filterByStatus('Open')">
+
+    <h3>Open</h3>
+
+    <h1>{{openCount}}</h1>
+
+  </div>
+
+  <div
+  class="card progress-card"
+  (click)="filterByStatus('In Progress')">
+
+    <h3>In Progress</h3>
+
+    <h1>{{inProgressCount}}</h1>
+
+  </div>
+
+  <div
+  class="card closed-card"
+  (click)="filterByStatus('Closed')">
+
+    <h3>Closed</h3>
+
+    <h1>{{closedCount}}</h1>
+
+  </div>
+  <div
+  class="card total-card"
+  (click)="filterByStatus('All')">
+
+  <h3>Total Tickets</h3>
+
+  <h1>{{totalTickets}}</h1>
+
+</div>
+
+</div>
+
+<!-- USER SCREEN -->
+<div *ngIf="role === 'User'">
+
+  <h2>Create Ticket</h2>
+
+  <form [formGroup]="ticketForm" (ngSubmit)="onSubmit()">
+
+    <div>
+      <label>Title</label><br>
+      <input type="text" formControlName="title">
+    </div>
+
+    <br>
+
+    <div>
+      <label>Description</label><br>
+      <textarea rows="4" cols="40" formControlName="description"></textarea>
+    </div>
+
+    <br>
+
+    <div>
+      <label>Status</label><br>
+
+      <select formControlName="status">
+        <option value="Open">Open</option>
+      </select>
+
+    </div>
+    <br>
+
+<div>
+
+  <label>Priority</label>
+
+  <br>
+
+  <select formControlName="priority">
+
+    <option value="Low">Low</option>
+
+    <option value="Medium">Medium</option>
+
+    <option value="High">High</option>
+
+    <option value="Critical">Critical</option>
+
+  </select>
+
+</div>
+
+    <br>
+
+    <!-- Upload Screenshot -->
+
+    <div>
+
+  <label><b>Upload Screenshot</b></label>
+
+  <br><br>
+
+  <input
+      type="file"
+      accept="image/*"
+      (change)="onFileSelected($event)">
+
+  <br><br>
+
+  <div *ngIf="imagePreview">
+
+    <p><b>Preview</b></p>
+
+    <img
+      [src]="imagePreview"
+      width="250"
+      style="border:1px solid black;">
+
+  </div>
+
+</div>
+
+    <br>
+
+    <button type="submit">
+
+      Create Ticket
+
+    </button>
+
+  </form>
+
+  <hr>
+
+</div>
+
+<!-- ADMIN SCREEN -->
+
+<div *ngIf="role === 'Admin'">
+
+  <h2>All Tickets</h2>
+
+  <div class="filter-container">
+
+    <input
+      type="text"
+      placeholder="🔍 Search title or description..."
+      [(ngModel)]="searchText">
+
+    <select [(ngModel)]="selectedStatus">
+
+      <option value="All">All Status</option>
+
+      <option value="Open">Open</option>
+
+      <option value="In Progress">In Progress</option>
+
+      <option value="Closed">Closed</option>
+
+    </select>
+
+    <select [(ngModel)]="selectedPriority">
+
+      <option value="All">All Priority</option>
+
+      <option value="Low">Low</option>
+
+      <option value="Medium">Medium</option>
+
+      <option value="High">High</option>
+
+      <option value="Critical">Critical</option>
+
+    </select>
+
+  </div>
+
+</div>
+
+<!-- USER SCREEN -->
+
+<div *ngIf="role === 'User'">
+
+  <h2>My Tickets</h2>
+
+</div>
+
+<div class="table-container">
+
+<table>
+
+  <tr>
+
+    <th>Id</th>
+
+    <th>Title</th>
+
+    <th>Description</th>
+
+    <th>Status</th>
+
+    <th>Priority</th>
+
+    <th>Screenshot</th>
+
+    <th *ngIf="role === 'Admin'">
+      Actions
+    </th>
+
+  </tr>
+
+  <tr 
+  *ngFor="let ticket of filteredTickets"
+  [ngClass]="{
+    'closed-ticket-row': ticket.status === 'Closed'
+  }">
+
+    <td>{{ ticket.id }}</td>
+
+    <td>{{ ticket.title }}</td>
+
+    <td>{{ ticket.description }}</td>
+
+    <td>
+
+  <span
+    [ngClass]="{
+      'status-open': ticket.status === 'Open',
+      'status-progress': ticket.status === 'In Progress',
+      'status-closed': ticket.status === 'Closed'
+    }">
+
+    {{ ticket.status }}
+
+  </span>
+
+</td>
+<td>
+
+  <span
+    [ngClass]="{
+      'priority-low': ticket.priority === 'Low',
+      'priority-medium': ticket.priority === 'Medium',
+      'priority-high': ticket.priority === 'High',
+      'priority-critical': ticket.priority === 'Critical'
+    }">
+
+    {{ ticket.priority }}
+
+  </span>
+
+</td>
+    <!-- Screenshot -->
+
+    <td>
+
+  <a
+      *ngIf="ticket.screenshotPath"
+      [href]="'https://localhost:7193/uploads/' + ticket.screenshotPath"
+      target="_blank">
+
+      <img
+          [src]="'https://localhost:7193/uploads/' + ticket.screenshotPath"
+          class="ticket-thumbnail">
+
+  </a>
+
+  <span *ngIf="!ticket.screenshotPath">
+      No Screenshot
+  </span>
+
+</td>
+
+    <!-- Admin -->
+
+    <td *ngIf="role === 'Admin'">
+
+      <button (click)="openTicket(ticket)">
+    View
+</button>
+
+    </td>
+
+  </tr>
+
+</table>
+
+</div>
+
+
+<!-- Ticket Details Modal -->
+
+<div
+  class="modal-overlay"
+  *ngIf="showModal">
+
+  <div class="modal-box">
+    <form [formGroup]="ticketForm">
+    
+
+    <h2>
+
+    Ticket #{{selectedTicket?.id}}
+
+</h2>
+
+    <hr>
+    <p><b>Created By</b></p>
+
+<p>
+
+  {{selectedTicket?.createdByUsername}}
+
+</p>
+
+<p><b>Created On</b></p>
+
+<p>
+
+  {{selectedTicket?.createdDate | date:'dd MMM yyyy, h:mm a'}}
+
+</p>
+
+<hr>
+
+    <p><b>Title</b></p>
+
+    <p>{{selectedTicket?.title}}</p>
+
+    <p><b>Description</b></p>
+
+    <p>{{selectedTicket?.description}}</p>
+
+    <p><b>Status</b></p>
+
+    <select formControlName="status">
+
+      <option value="Open">Open</option>
+      <option value="In Progress">In Progress</option>
+      <option value="Closed">Closed</option>
+
+    </select>
+
+    <br><br>
+
+    <p><b>Priority</b></p>
+
+    <select formControlName="priority">
+
+      <option value="Low">Low</option>
+      <option value="Medium">Medium</option>
+      <option value="High">High</option>
+      <option value="Critical">Critical</option>
+
+    </select>
+
+    <br><br>
+
+    <p><b>Screenshot</b></p>
+
+    <img
+      *ngIf="selectedTicket?.screenshotPath"
+      [src]="'https://localhost:7193/uploads/' + selectedTicket?.screenshotPath"
+      style="width:100%;max-height:300px;object-fit:contain;border:1px solid #ccc;">
+
+    <br><br>
+
+    <button (click)="onSubmit()">
+
+      Update Ticket
+
+    </button>
+
+    &nbsp;
+
+    <button (click)="closeModal()">
+
+      Close
+
+    </button>
+  </form>
+  </div>
+</div>
