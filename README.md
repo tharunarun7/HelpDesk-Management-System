@@ -117,7 +117,42 @@ HelpDesk-Management-System
 
 # 📸 Screenshots
 
-> Screenshots will be added soon.
+## Login Page
+
+![Login](screenshots/login page.png)
+![Login Popup](screenshots/login%20popup.png)
+
+---
+
+## Dashboard
+
+![Dashboard](screenshots/dashboard.png)
+
+---
+
+## Ticket Management
+
+![Tickets](screenshots/tickets.png)
+
+---
+
+## Ticket Details
+
+![Popup](screenshots/ticket%20popup.png)
+
+---
+
+## User Management
+
+![Users](screenshots/userpage.png)
+![Users](screenshots/userpage2.png)
+
+---
+
+## Swagger API
+
+![Swagger](screenshots/swagger1.png)
+![Swagger](screenshots/swagger2.png)
 
 ---
 
