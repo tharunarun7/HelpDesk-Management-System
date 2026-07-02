@@ -119,7 +119,7 @@ HelpDesk-Management-System
 
 ## Login Page
 
-![Login](screenshots/login page.png)
+![Login](screenshots/login%20page.png)
 ![Login Popup](screenshots/login%20popup.png)
 
 ---
