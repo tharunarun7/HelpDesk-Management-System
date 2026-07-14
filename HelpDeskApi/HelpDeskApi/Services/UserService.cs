@@ -36,5 +36,19 @@ namespace HelpDeskApi.Services
         {
             await _userRepository.DeleteUserAsync(id);
         }
+        public async Task<bool> UserExistsAsync(string username)
+        {
+            return await _userRepository.UserExistsAsync(username);
+        }
+
+        public async Task<bool> EmailExistsAsync(string email)
+        {
+            return await _userRepository.EmailExistsAsync(email);
+        }
+
+        public async Task RegisterUserAsync(User user)
+        {
+            await _userRepository.RegisterUserAsync(user);
+        }
     }
 }

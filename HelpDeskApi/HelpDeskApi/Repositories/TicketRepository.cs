@@ -62,7 +62,27 @@ namespace HelpDeskApi.Repositories
 
         public async Task UpdateTicketAsync(Ticket ticket)
         {
-            _context.Tickets.Update(ticket);
+            var existingTicket = await _context.Tickets.FindAsync(ticket.Id);
+
+            if (existingTicket == null)
+                return;
+
+            existingTicket.Title = ticket.Title;
+            existingTicket.Description = ticket.Description;
+            existingTicket.Status = ticket.Status;
+            existingTicket.Priority = ticket.Priority;
+            existingTicket.AssignedTo = ticket.AssignedTo;
+            existingTicket.ScreenshotPath = ticket.ScreenshotPath;
+
+            // Admin response
+            existingTicket.AdminResponse = ticket.AdminResponse;
+
+            // Save response date automatically
+            if (!string.IsNullOrWhiteSpace(ticket.AdminResponse))
+            {
+                existingTicket.ResponseDate = DateTime.Now;
+            }
+
             await _context.SaveChangesAsync();
         }
 

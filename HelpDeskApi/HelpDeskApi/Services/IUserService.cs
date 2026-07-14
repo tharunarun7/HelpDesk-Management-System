@@ -13,5 +13,10 @@ namespace HelpDeskApi.Services
         Task UpdateUserAsync(User user);
 
         Task DeleteUserAsync(int id);
+        Task<bool> UserExistsAsync(string username);
+
+        Task<bool> EmailExistsAsync(string email);
+
+        Task RegisterUserAsync(User user);
     }
 }

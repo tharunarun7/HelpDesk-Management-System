@@ -47,6 +47,43 @@ namespace HelpDeskApi.Controllers
                 role = user.Role
             });
         }
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(RegisterRequest request)
+        {
+            if (await _context.Users.AnyAsync(u => u.Username == request.Username))
+            {
+                return BadRequest(new
+                {
+                    message = "Username already exists."
+                });
+            }
+
+            if (await _context.Users.AnyAsync(u => u.Email == request.Email))
+            {
+                return BadRequest(new
+                {
+                    message = "Email already exists."
+                });
+            }
+
+            var user = new User
+            {
+                Username = request.Username,
+                Email = request.Email,
+                Password = request.Password,
+                Role = "User"
+            };
+
+            _context.Users.Add(user);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Registration Successful"
+            });
+        }
+
 
         private string GenerateJwtToken(User user)
         {

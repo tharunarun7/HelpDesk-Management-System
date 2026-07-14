@@ -1,23 +1,114 @@
-<form [formGroup]="loginForm" (ngSubmit)="login()">
+<div class="login-page">
 
-  <h2>Login</h2>
+  <div class="left-panel">
 
-  <div>
-    <label>Username</label>
-    <input type="text" formControlName="username">
+    <div class="brand">
+
+        <div class="logo-circle">
+            <i class="fa-solid fa-headset"></i>
+        </div>
+
+        <h1>Help Desk</h1>
+        <h2>Management System</h2>
+
+        <p>
+            Raise tickets, monitor requests and communicate with administrators
+            through one centralized platform.
+        </p>
+
+        <div class="features">
+
+            <div class="feature-box">
+                <i class="fa-solid fa-ticket"></i>
+                <div>
+                    <h4>Raise Tickets</h4>
+                    <span>Create support requests in seconds.</span>
+                </div>
+            </div>
+
+            <div class="feature-box">
+                <i class="fa-solid fa-comments"></i>
+                <div>
+                    <h4>Live Conversation</h4>
+                    <span>Chat directly with administrators.</span>
+                </div>
+            </div>
+
+            <div class="feature-box">
+                <i class="fa-solid fa-chart-line"></i>
+                <div>
+                    <h4>Track Progress</h4>
+                    <span>Monitor every ticket until resolution.</span>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+  <div class="right-panel">
+
+    <form
+      [formGroup]="loginForm"
+      (ngSubmit)="login()"
+      class="login-card">
+
+      <h2>Login</h2>
+
+      <div class="input-group">
+
+  <label>Username</label>
+
+  <div class="input-box">
+
+    <i class="fa-solid fa-user"></i>
+
+    <input
+      type="text"
+      formControlName="username"
+      placeholder="Enter username">
+
   </div>
 
-  <br>
+</div>
 
-  <div>
-    <label>Password</label>
-    <input type="password" formControlName="password">
+      <div class="input-group">
+
+  <label>Password</label>
+
+  <div class="input-box">
+
+    <i class="fa-solid fa-lock"></i>
+
+    <input
+      type="password"
+      formControlName="password"
+      placeholder="Enter password">
+
   </div>
 
-  <br>
+</div>
 
-  <button type="submit">
-    Login
-  </button>
+      <button type="submit">
 
-</form>
+        Login
+
+      </button>
+
+      <p class="signup-link">
+
+        Don't have an account?
+
+        <a routerLink="/register">
+          Create Account
+        </a>
+
+      </p>
+
+    </form>
+
+  </div>
+
+</div>

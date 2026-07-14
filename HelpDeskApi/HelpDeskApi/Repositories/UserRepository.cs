@@ -45,5 +45,22 @@ namespace HelpDeskApi.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+        public async Task<bool> UserExistsAsync(string username)
+        {
+            return await _context.Users
+                .AnyAsync(u => u.Username == username);
+        }
+
+        public async Task<bool> EmailExistsAsync(string email)
+        {
+            return await _context.Users
+                .AnyAsync(u => u.Email == email);
+        }
+
+        public async Task RegisterUserAsync(User user)
+        {
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+        }
     }
 }

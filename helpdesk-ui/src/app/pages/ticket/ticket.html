@@ -24,6 +24,7 @@
 
 </div>
 
+
 <!-- PASTE HERE -->
 
 <div class="dashboard">
@@ -131,9 +132,9 @@
   <br><br>
 
   <input
-      type="file"
-      accept="image/*"
-      (change)="onFileSelected($event)">
+    type="file"
+    accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+    (change)="onFileSelected($event)">
 
   <br><br>
 
@@ -226,16 +227,17 @@
     <th>Title</th>
 
     <th>Description</th>
+    <th>Response</th>
 
     <th>Status</th>
 
     <th>Priority</th>
 
-    <th>Screenshot</th>
+    <th>Document</th>
 
-    <th *ngIf="role === 'Admin'">
-      Actions
-    </th>
+    <th>
+    Actions
+</th>
 
   </tr>
 
@@ -250,6 +252,23 @@
     <td>{{ ticket.title }}</td>
 
     <td>{{ ticket.description }}</td>
+    <td>
+
+  <span
+      *ngIf="ticket.adminResponse; else awaiting"
+      class="response-available">
+
+      ✔ Conversation Available
+
+  </span>
+
+  <ng-template #awaiting>
+
+      Awaiting Response
+
+  </ng-template>
+
+</td>
 
     <td>
 
@@ -284,32 +303,55 @@
 
     <td>
 
-  <a
-      *ngIf="ticket.screenshotPath"
+  <ng-container *ngIf="ticket.screenshotPath; else noDocument">
+
+    <!-- IMAGE -->
+
+    <a
+      *ngIf="ticket.screenshotPath.endsWith('.jpg')
+          || ticket.screenshotPath.endsWith('.jpeg')
+          || ticket.screenshotPath.endsWith('.png')"
       [href]="'https://localhost:7193/uploads/' + ticket.screenshotPath"
       target="_blank">
 
       <img
-          [src]="'https://localhost:7193/uploads/' + ticket.screenshotPath"
-          class="ticket-thumbnail">
+        [src]="'https://localhost:7193/uploads/' + ticket.screenshotPath"
+        class="ticket-thumbnail">
 
-  </a>
+    </a>
 
-  <span *ngIf="!ticket.screenshotPath">
-      No Screenshot
-  </span>
+    <!-- PDF / DOC -->
+
+    <a
+      *ngIf="!(ticket.screenshotPath.endsWith('.jpg')
+          || ticket.screenshotPath.endsWith('.jpeg')
+          || ticket.screenshotPath.endsWith('.png'))"
+      [href]="'https://localhost:7193/uploads/' + ticket.screenshotPath"
+      target="_blank">
+
+      📄 View Document
+
+    </a>
+
+  </ng-container>
+
+  <ng-template #noDocument>
+
+      No Document
+
+  </ng-template>
 
 </td>
 
     <!-- Admin -->
 
-    <td *ngIf="role === 'Admin'">
+    <td>
 
-      <button (click)="openTicket(ticket)">
-    View
-</button>
+    <button (click)="openTicket(ticket)">
+        View
+    </button>
 
-    </td>
+</td>
 
   </tr>
 
@@ -320,94 +362,130 @@
 
 <!-- Ticket Details Modal -->
 
-<div
-  class="modal-overlay"
-  *ngIf="showModal">
+<!-- Ticket Details Modal -->
+
+<div class="modal-overlay" *ngIf="showModal">
 
   <div class="modal-box">
-    <form [formGroup]="ticketForm">
-    
 
-    <h2>
-
-    Ticket #{{selectedTicket?.id}}
-
-</h2>
+    <h2>Ticket #{{selectedTicket?.id}}</h2>
 
     <hr>
+
     <p><b>Created By</b></p>
+    <p>{{selectedTicket?.createdByUsername}}</p>
 
-<p>
+    <p><b>Created On</b></p>
+    <p>{{selectedTicket?.createdDate | date:'dd MMM yyyy, h:mm a'}}</p>
 
-  {{selectedTicket?.createdByUsername}}
-
-</p>
-
-<p><b>Created On</b></p>
-
-<p>
-
-  {{selectedTicket?.createdDate | date:'dd MMM yyyy, h:mm a'}}
-
-</p>
-
-<hr>
+    <hr>
 
     <p><b>Title</b></p>
-
     <p>{{selectedTicket?.title}}</p>
 
     <p><b>Description</b></p>
-
     <p>{{selectedTicket?.description}}</p>
 
-    <p><b>Status</b></p>
+    <hr>
 
-    <select formControlName="status">
+    <!-- ADMIN ONLY -->
 
-      <option value="Open">Open</option>
-      <option value="In Progress">In Progress</option>
-      <option value="Closed">Closed</option>
+    <div *ngIf="role==='Admin'">
 
-    </select>
+      <form [formGroup]="ticketForm">
 
-    <br><br>
+        <p><b>Status</b></p>
 
-    <p><b>Priority</b></p>
+        <select formControlName="status">
 
-    <select formControlName="priority">
+          <option value="Open">Open</option>
 
-      <option value="Low">Low</option>
-      <option value="Medium">Medium</option>
-      <option value="High">High</option>
-      <option value="Critical">Critical</option>
+          <option value="In Progress">In Progress</option>
 
-    </select>
+          <option value="Closed">Closed</option>
 
-    <br><br>
+        </select>
 
-    <p><b>Screenshot</b></p>
+        <br><br>
 
-    <img
-      *ngIf="selectedTicket?.screenshotPath"
-      [src]="'https://localhost:7193/uploads/' + selectedTicket?.screenshotPath"
-      style="width:100%;max-height:300px;object-fit:contain;border:1px solid #ccc;">
+        <p><b>Priority</b></p>
 
-    <br><br>
+        <select formControlName="priority">
 
-    <button (click)="onSubmit()">
+          <option value="Low">Low</option>
 
-      Update Ticket
+          <option value="Medium">Medium</option>
 
-    </button>
+          <option value="High">High</option>
 
-    &nbsp;
+          <option value="Critical">Critical</option>
 
-    <button (click)="closeModal()">
+        </select>
 
-      Close
+        <br><br>
 
-    </button>
-  </form>
+        <button type="button" (click)="onSubmit()">
+
+          Update Ticket
+
+        </button>
+
+      </form>
+
+      <hr>
+
+    </div>
+
+    <!-- Conversation -->
+
+   <h3>Conversation</h3>
+
+<div class="conversation-box">
+
+  <div
+  *ngFor="let msg of messages"
+  class="message-card"
+  [ngClass]="{
+    'admin-message': msg.sentBy === 'Admin',
+    'user-message': msg.sentBy !== 'Admin'
+  }">
+
+    <div class="message-header">
+      <span class="sender">{{ msg.sentBy }}</span>
+
+      <span class="time">
+        {{ msg.sentAt | date:'dd MMM yyyy, h:mm a' }}
+      </span>
+    </div>
+
+    <div class="message-text">
+      {{ msg.message }}
+    </div>
+
   </div>
+
 </div>
+<br>
+
+<textarea
+  [(ngModel)]="newMessage"
+  [ngModelOptions]="{standalone:true}"
+  rows="4"
+  placeholder="Type your reply..."
+  style="width:100%; resize:none;">
+</textarea>
+
+<br><br>
+
+<button type="button" (click)="sendMessage()">
+  Send Reply
+</button>
+
+&nbsp;
+
+<button type="button" (click)="closeModal()">
+  Close
+</button>
+
+</div>   <!-- closes modal-box -->
+</div>   <!-- closes modal-overlay -->

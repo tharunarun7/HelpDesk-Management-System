@@ -394,3 +394,47 @@ td{
     overflow:auto;
 
 }
+.conversation-box{
+    max-height:350px;
+    overflow-y:auto;
+    padding:10px;
+    background:#f5f5f5;
+    border-radius:10px;
+}
+
+.message-card{
+    margin-bottom:15px;
+    padding:12px;
+    border-radius:12px;
+    max-width:75%;
+    word-wrap:break-word;
+}
+
+.admin-message{
+    background:#dbeafe;
+    margin-right:auto;
+}
+
+.user-message{
+    background:#dcfce7;
+    margin-left:auto;
+}
+
+.message-header{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:6px;
+}
+
+.sender{
+    font-weight:bold;
+}
+
+.time{
+    font-size:12px;
+    color:gray;
+}
+
+.message-text{
+    font-size:15px;
+}

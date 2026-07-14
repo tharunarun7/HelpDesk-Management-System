@@ -13,6 +13,8 @@ namespace HelpDeskApi.Models
 
         // NEW
         public string Priority { get; set; } = "Medium";
+        public string? AdminResponse { get; set; }
+        public DateTime? ResponseDate { get; set; }
 
         public int CreatedBy { get; set; }
         // Navigation property
@@ -28,5 +30,6 @@ namespace HelpDeskApi.Models
 
         [NotMapped]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public ICollection<TicketMessage>? Messages { get; set; }
     }
 }

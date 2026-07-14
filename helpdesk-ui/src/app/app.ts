@@ -1,19 +1,12 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { LoginComponent } from './pages/login/login';
-import { Tickets } from './pages/ticket/ticket';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, LoginComponent, Tickets],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
-  showLogin = true;
-
-  onLoginSuccess() {
-    this.showLogin = false;
-  }
 }

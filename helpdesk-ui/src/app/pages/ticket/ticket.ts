@@ -3,19 +3,27 @@ import { CommonModule } from '@angular/common';
 import { TicketService } from '../../services/ticket.service';
 import { Ticket } from '../../models/ticket';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
-
+import { TicketMessage } from '../../models/ticket-message';
+import { TicketMessageService } from '../../services/ticket-message.service';
+import { Router } from '@angular/router';
+import { SendMessage } from '../../models/send-message';
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-ticket',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './ticket.html',
   styleUrl: './ticket.css'
+
 })
 export class Tickets implements OnInit {
 
   tickets: Ticket[] = [];
 
   role: string = '';
+  messages: TicketMessage[] = [];
+
+newMessage = '';
 
   // NEW
   username: string = '';
@@ -26,6 +34,9 @@ export class Tickets implements OnInit {
   selectedTicket: Ticket | null = null;
 
 showModal = false;
+showResponseModal = false;
+
+  responseText = '';
 
   selectedFile!: File;
 
@@ -42,12 +53,16 @@ searchText = '';
 selectedStatus = 'All';
 
 selectedPriority = 'All';
+successMessage='';
 
   constructor(
     private ticketService: TicketService,
+    private messageService: TicketMessageService,
     private fb: FormBuilder,
-    private cdr: ChangeDetectorRef
-  ) {
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+    private toastr: ToastrService
+) {
 
     this.ticketForm = this.fb.group({
   title: ['', Validators.required],
@@ -56,6 +71,7 @@ selectedPriority = 'All';
 
   // NEW
   priority: ['Medium', Validators.required],
+  adminResponse: [''],
 
   createdBy: [Number(localStorage.getItem('userId'))],
   assignedTo: [1],
@@ -124,6 +140,7 @@ selectedPriority = 'All';
 
     // NEW
     priority: ticket.priority,
+    adminResponse: ticket.adminResponse,
 
     createdBy: ticket.createdBy,
     assignedTo: ticket.assignedTo,
@@ -139,27 +156,35 @@ openTicket(ticket: Ticket): void {
   this.selectedTicketId = ticket.id;
 
   this.showModal = true;
-
+  this.loadMessages(ticket.id);
+console.log("Opening Ticket:", ticket.id);
   this.ticketForm.patchValue({
 
-    title: ticket.title,
-    description: ticket.description,
-    status: ticket.status,
-    priority: ticket.priority,
-    createdBy: ticket.createdBy,
-    assignedTo: ticket.assignedTo,
-    screenshotPath: ticket.screenshotPath
+  title: ticket.title,
+  description: ticket.description,
+  status: ticket.status,
+  priority: ticket.priority,
+  adminResponse: ticket.adminResponse,
 
-  });
+  createdBy: ticket.createdBy,
+  assignedTo: ticket.assignedTo,
+  screenshotPath: ticket.screenshotPath
+  
+
+});
 
 }
 closeModal(): void {
 
   this.showModal = false;
+  
 
   this.selectedTicket = null;
 
   this.selectedTicketId = 0;
+  this.messages = [];
+
+this.newMessage = '';
 
 }
 
@@ -176,7 +201,10 @@ closeModal(): void {
 
       next: () => {
 
-        alert('Ticket Updated Successfully');
+    this.toastr.success(
+      'Ticket Updated Successfully!',
+      'Success'
+    );
 
         // Reload table
         this.loadTickets();
@@ -209,7 +237,11 @@ closeModal(): void {
 
         next: () => {
 
-          alert('Ticket Created Successfully');
+          this.toastr.success(
+  'Ticket Registered Successfully!',
+  'Success'
+);
+
 
           this.ticketForm.reset({
 
@@ -240,7 +272,9 @@ closeModal(): void {
   this.ticketService.getAllTickets()
     .subscribe({
 
+      
       next: (data) => {
+        
 
         // Sort so Closed tickets appear at the bottom
         this.tickets = data.sort((a, b) => {
@@ -267,6 +301,53 @@ closeModal(): void {
         this.totalTickets = this.tickets.length;
 
         this.cdr.detectChanges();
+
+      },
+
+      error: err => console.log(err)
+
+    });
+
+}
+loadMessages(ticketId: number): void {
+  console.log("Loading messages for:", ticketId);
+
+  this.messageService.getMessages(ticketId)
+    .subscribe({
+
+      next: (data) => {
+
+        this.messages = data;
+
+      },
+      
+
+      error: err => console.log(err)
+
+    });
+
+}
+sendMessage(): void {
+
+  if (!this.newMessage.trim())
+    return;
+
+  const message: SendMessage = {
+
+    ticketId: this.selectedTicketId,
+
+    message: this.newMessage
+
+  };
+
+  this.messageService.sendMessage(message)
+    .subscribe({
+
+      next: () => {
+
+        this.newMessage = '';
+
+        this.loadMessages(this.selectedTicketId);
 
       },
 
@@ -302,14 +383,28 @@ get filteredTickets(): Ticket[] {
   });
 
 }
+viewResponse(response: string): void {
+
+  this.responseText = response;
+
+  this.showResponseModal = true;
+
+}
+
+closeResponseModal(): void {
+
+  this.showResponseModal = false;
+  
+
+}
 
   logout(): void {
 
-    localStorage.clear();
+  localStorage.clear();
 
-    window.location.reload();
+  this.router.navigate(['/']);
 
-  }
+}
 
 }
 

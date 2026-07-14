@@ -111,17 +111,20 @@ namespace HelpDeskApi.Controllers
             var extension = Path.GetExtension(file.FileName).ToLower();
 
             var allowedExtensions = new[]
-            {
-        ".jpg",
-        ".jpeg",
-        ".png"
-    };
+  {
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".pdf",
+    ".doc",
+    ".docx"
+};
 
             if (!allowedExtensions.Contains(extension))
             {
                 return BadRequest(new
                 {
-                    message = "Only JPG, JPEG and PNG files are allowed."
+                    message = "Only JPG, JPEG, PDF, DOC, DOCX and PNG files are allowed."
                 });
             }
 

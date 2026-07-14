@@ -9,6 +9,8 @@ export interface Ticket {
   status: string;
 
   priority: string;
+  adminResponse?: string;
+  responseDate?:string;
 
   createdBy: number;
 

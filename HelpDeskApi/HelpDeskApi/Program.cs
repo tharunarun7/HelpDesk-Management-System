@@ -24,6 +24,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<ITicketMessageRepository, TicketMessageRepository>();
+
+builder.Services.AddScoped<ITicketMessageService, TicketMessageService>();
 
 var jwtKey = builder.Configuration["Jwt:Key"];
 

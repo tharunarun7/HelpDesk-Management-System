@@ -14,6 +14,7 @@ namespace HelpDeskApi.Data
         public DbSet<User> Users { get; set; }
 
         public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<TicketMessage> TicketMessages { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Ticket>()
